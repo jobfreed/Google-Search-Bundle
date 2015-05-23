@@ -1,2 +1,2 @@
 # Google-Search-Bundle
-A Search engine for symfony 2
+A Google Search engine for symfony 2
