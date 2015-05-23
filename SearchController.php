@@ -53,21 +53,21 @@ class SearchController extends Controller
     {
         if ( isset($_SERVER['HTTP_X_FORWARDED_FOR']) ){
             if($_SERVER['HTTP_X_FORWARDED_FOR'] == '127.0.0.1'){
-                $ip = '82.246.104.59';
+                $ip = 'your computer ip'; //E.g xxx.xxx.xxx.xx. https://www.whatismyip.com/ip-whois-lookup/
             }else{
                 $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
             }
         }
         elseif(isset($_SERVER['REMOTE_ADDR'])){
             if($_SERVER['REMOTE_ADDR'] == '127.0.0.1'){
-                $ip = '82.246.104.59';
+                $ip = 'your computer ip'; //E.g xxx.xxx.xxx.xx. https://www.whatismyip.com/ip-whois-lookup/
             }else{
                 $ip = $_SERVER['REMOTE_ADDR'];
             }
         }   
         elseif(isset($_SERVER['HTTP_CLIENT_IP'])){
             if($_SERVER['HTTP_CLIENT_IP'] == '127.0.0.1'){
-                $ip = '82.246.104.59';
+                $ip = 'your computer ip'; //E.g xxx.xxx.xxx.xx. https://www.whatismyip.com/ip-whois-lookup/
             }else{
                 $ip = $_SERVER['HTTP_CLIENT_IP'];
             }
