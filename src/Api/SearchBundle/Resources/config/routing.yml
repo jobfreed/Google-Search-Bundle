@@ -1,0 +1,7 @@
+search:
+    pattern:  /
+    defaults: { _controller: ApiSearchBundle:Search:totalInternalSearch }
+
+search_jobweb:
+    pattern:  /research/job/in/web
+    defaults: { _controller: ApiSearchBundle:Search:jobWebSearch }
