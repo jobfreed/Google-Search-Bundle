@@ -1,0 +1,145 @@
+{% extends '::videos.html.twig' %}
+{% block title %}{{ 'Search job by keyword'|trans }}{% endblock%}
+{% block stylesheets %}
+    {{ parent() }}
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <link rel="stylesheet" href="{{ asset('geoaddresspicker/demos/themes/base/jquery.ui.all.css') }}">
+{% endblock stylesheets %}
+{% block javascripts %}  
+    {{ parent() }}
+    <script src="http://maps.google.com/maps/api/js?sensor=false&amp;libraries=places"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+    <script src="{{ asset('geoaddresspicker/src/jquery.ui.addresspicker.js') }}"></script>
+    <script>
+        $(function () {
+            var addresspicker = $("#addresspicker").addresspicker();
+            var addresspickerMap = $("#addresspicker_map").addresspicker({
+                regionBias: "en",
+                language: "en",
+                updateCallback: showCallback,
+                mapOptions: {
+                    zoom: 4,
+                    center: new google.maps.LatLng(35, 51),
+                    scrollwheel: false,
+                    mapTypeId: google.maps.MapTypeId.ROADMAP
+                },
+                elements: {
+                    map: "#map",
+                    lat: "#latitude",
+                    lng: "#longitude",
+                    street_number: '#streetnum',
+                    route: '#route',
+                    locality: '#city',
+                    //sublocality: '#sublocality',
+                    administrative_area_level_3: '#administrative_area_level_3',
+                    administrative_area_level_2: '#department',
+                    administrative_area_level_1: '#region',
+                    country: '#country',
+                    //country_short_name: '#country_short_name',
+                    postal_code: '#zipcode',
+                    type: '#type'
+                }
+            });
+
+            var gmarker = addresspickerMap.addresspicker("marker");
+            gmarker.setVisible(true);
+            addresspickerMap.addresspicker("updatePosition");
+
+            $('#reverseGeocode').change(function () {
+                $("#addresspicker_map").addresspicker("option", "reverseGeocode", ($(this).val() === 'true'));
+            });
+
+            function showCallback(geocodeResult, parsedGeocodeResult) {
+                $('#callback_result').text(JSON.stringify(parsedGeocodeResult, null, 4));
+            }
+            // Update zoom field
+            var map = $("#addresspicker_map").addresspicker("map");
+            google.maps.event.addListener(map, 'idle', function () {
+                $('#zoom').val(map.getZoom());
+            });
+
+        });
+    </script>
+    <script>
+        (function () {
+            var cx = 'your cx key'; //create your cx key in https://cse.google.com/cse/all
+            var gcse = document.createElement('script');
+            gcse.type = 'text/javascript';
+            gcse.async = true;
+            gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
+                    '//www.google.com/cse/cse.js?cx=' + cx;
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(gcse, s);
+        })();
+    </script>			
+
+
+    <script type="text/javascript">
+        function executeQuery() {
+            var input = document.getElementById('cse-search-input-box-id');
+            var element = google.search.cse.element.getElement('searchresults-only0');
+            if (input.value == '') {
+                element.clearAllResults();
+            } else {
+                element.execute(input.value);
+            }
+            return false;
+        }
+    </script>
+{% endblock javascripts %}
+{% block body %}
+    <h2>{{ 'Search job by keyword in the web'|trans }}</h2>
+    <div class="col-lg-12">
+        {% if what != "" and where != "" %}
+            <ul class="nav">
+                <li class="dropdown" id="menuCriteria">
+                    <a class="dropdown-toggle btn btn-info" href="#" data-toggle="dropdown" id="navCriteria"><b>{{ 'Modify all criteria'|trans|upper }}</b>  <b class="caret"></b></a>
+                    <div class="dropdown-menu" style="padding:17px;">
+                        <form action="{{ path('search_jobweb') }}" method="post" id="formCriteria"> 
+                            {{ 'What'|trans }}?<br>
+                            <input name="what" value="{{ what }}" class="col-md-12" type="text" style="font-size:12px;" value="" placeholder="{{ 'e.g. Webmaster, Technician, ...'|trans|capitalize }}" required>
+                            {{ 'Where'|trans }}?<br>
+                            <input name="where" value="{{ where }}"  class="col-md-12" type="text" style="font-size:12px;" placeholder="{{ 'country, region, postal code, ...'|trans|capitalize }}" required><br><br>
+                            <input class="btn btn-xs btn-primary" type="submit" value="{{ 'Submit'|trans }}">
+                        </form>
+                    </div><br>
+                </li>
+                <li>
+                    <form onsubmit="return executeQuery();" id="cse-search-box-form-id">
+                        <input type="hidden" id="cse-search-input-box-id"  class="form-control" autocomplete="on" value="{{ what }}, {{ where }}"> 
+                        <div class="col-xs-12">
+                            <button type="submit" class="col-md-12 btn btn-default">
+                                <span class="fa fa-search"> <b>{{ 'Display'|trans|upper }}</b> <em class="small">({{ what|upper }} {{ where|upper }})</em></span>
+                            </button>
+                        </div>
+                    </form>    
+                </li>
+            </ul>  
+        {% else %}
+            <form action="{{ path('search_jobweb') }}" method="post">  
+                <table class="table">
+                    <tr>
+                        <td>
+                            <label>{{ 'What'|trans }}?&nbsp;</label>
+                        </td>
+                        <td>
+                            <input name="what" value="{{ what }}" class="col-md-12" type="text" style="font-size:12px" value="" placeholder="{{ 'e.g. Webmaster, Technician, ...'|trans|capitalize }}" required>
+                        </td>
+                        <td>
+                            <label>{{ 'What'|trans }}?&nbsp;</label>
+                        </td>
+                        <td>
+                            <input id="addresspicker_map" name="where" value="{{ where }}"  class="col-md-12" type="text" style="font-size:12px" value="" placeholder="{{ 'country, region, postal code, ...'|trans|capitalize }}" required>
+                        </td>
+                        <td>
+                            <input type="submit" class="btn btn-xs btn-default" value="{{ 'Submit'|trans }}">
+                        </td>
+                    </tr>
+            </form>
+        </table>
+    {% endif %}
+
+    <gcse:searchresults-only></gcse:searchresults-only>
+</div>
+{% endblock %}
